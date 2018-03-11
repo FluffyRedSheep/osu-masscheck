@@ -18,7 +18,7 @@ The `options` may be a continuous sequence of flags (`--flag_name`) and argument
 ```
 --f_apiKey (./APIKEY)         - the file that the API key is stored in by default
 
---b_i (10)				      - amount of users to request info from before pausing
+--b_i (10)                    - amount of users to request info from before pausing
 --b_l (10)                    - how long to pause (direct argument to 'sleep')
 
 --r_l (20)                    - amount of top plays to request for any given player
