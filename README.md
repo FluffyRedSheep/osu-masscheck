@@ -5,7 +5,7 @@ Initially commissioned by **Redavor** for use in tournaments hosted by the _Rapi
 Tested and confirmed functional using Lua 5.1.
 Requires [luasocket](https://luarocks.org/modules/luarocks/luasocket), and [json-lua](https://luarocks.org/modules/jiyinyiyong/json-lua)
 
-You must request an osu!API key [here](https://osu.ppy.sh/p/api). By default, `osu-masscheck` reads from `./APIKEY` for the API key.
+You must request an osu!API key [here](https://osu.ppy.sh/p/api). By default, `osu!masscheck` reads from `./APIKEY` for the API key.
 To alter this, see below.
 
 ## Usage
@@ -47,11 +47,11 @@ The `options` may be a continuous sequence of flags (`--flag_name`) and argument
 --c_rrChk_margin (2000)       - how many ranks of margin are granted to the player
 ```
 ## Checks
-###pp_gap
+### pp_gap
 Goes through the requested players' top plays, and raises an error if the pp difference between two plays exceeds `c_ppGap_maxgap`
-###pp_spread
+### pp_spread
 Checks for inequal distribution among top plays- it takes the average pp difference between two top plays (`total pp / amount of top plays`) and then proceeds to check each individual pp increase between two plays. If a given pp gap veers off from the average by `c_ppSpr_spreadleniency` pp, then an error is raised.
-###min_playcount
+### min_playcount
 Playcount of a player must be **bigger** than `c_pcMin_minplaycount`, lest an error is thrown.
-###rank_range (TBD)
+### rank_range (TBD)
 Shall verify that a players' rank is somewhere inbetween `c_rrChk_highboundary-c_rrChk_margin` and `c_rrChk_lowboundary+c_rrChk_margin`. If this does not hold true, and error is raised.
