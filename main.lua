@@ -115,7 +115,7 @@ function report(player,check,description,...)
 end
 
 --------------------------------------------------------------------------------
--- Compile all reports for a player into a table.
+-- Print all reports.
 --------------------------------------------------------------------------------
 do
 -- Mold to slot variables into
@@ -237,9 +237,7 @@ end
 --------------------------------------------------------------------------------
 -- Individual checks that can be performed on a given user.
 --
--- All checks return:
--- a 'true' for a pass, 'false' for fraudulent behaviour.
--- a table with information about said behaviour.
+-- Checks create a report when suspicious behaviour is detected.
 --------------------------------------------------------------------------------
 Checks={};
 
