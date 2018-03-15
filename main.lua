@@ -5,6 +5,7 @@
 require("socket");
 local http=require("socket.http");
 local JSON = require("JSON");
+local Void={};
 
 --------------------------------------------------------------------------------
 -- Retrieve API key from file
@@ -61,19 +62,21 @@ local cfg={
 --------------------------------------------------------------------------------
 -- Request variables
 --------------------------------------------------------------------------------
-	r_l=20; -- amount of top plays to be requested.
+	r_l=20;     -- amount of top plays to be requested.
 	r_m="std";  -- request gamemode
-	r_s="u";-- usernames or IDs
+	r_s="u";    -- (u)sername or player(id).
 --------------------------------------------------------------------------------
 -- Check variables
 --------------------------------------------------------------------------------
-	c_Checks="all";          -- Checks to perform, see keys in table _checks;
+	c_Checks="all";            -- Checks to perform, see keys in table _checks;
 	c_ppGap_maxgap=50;         -- Maximum pp difference between two top plays.
 	c_ppSpr_spreadleniency=10; -- ((r_l/2)th play - c_spreadleniency) < (avg. pp of r_l top plays) < ((r_l/2)th top play - spreadleniency)
 	c_pcMin_minplaycount=8000; -- Minimum amount of plays
 	c_rrChk_highboundary=20000;-- Upper rank boundary
+	c_rrChk_highmargin=2000;   -- Allowable upper rank margin
 	c_rrChk_lowboundary=70000; -- Lower rank boundary
-	c_rrChk_margin=2000;       -- Allowable rank margin
+	c_rrChk_lowmargin=2000;    -- Allowable lower rank margin
+	c_rrChk_ranktype="g";      -- Rank check type- (g)lobal or (c)ountry
 --------------------------------------------------------------------------------
 	_=0; -- Throwaway (prevent argparse from dying).
 }
@@ -92,6 +95,8 @@ function new_player(player)
 		url=("https://osu.ppy.sh/u/%s"):format(player.user_id),
 		reports={};
 	}
+	-- Create a link to a players' report entry:
+	player.reports=Reports[player.user_id];
 end
 
 --------------------------------------------------------------------------------
@@ -324,6 +329,17 @@ function Checks.min_playcount(player,cfg)
 end
 
 --------------------------------------------------------------------------------
+-- Rank range check
+--------------------------------------------------------------------------------
+-- Ensures that a given players' rank lies between a given range. Leniency
+-- can be given with a deviating-rank range. Leave this leniency margin at '0'
+-- for a hard rank check.
+--------------------------------------------------------------------------------
+--function Checks.rank_range(player,cfg)
+--
+--end
+
+--------------------------------------------------------------------------------
 -- Encode to uri.
 --------------------------------------------------------------------------------
 -- stolen: https://gist.github.com/ignisdesign/4323051
@@ -445,8 +461,15 @@ local names=get_names();
 -- Go over the list of names to-be-checked.
 --------------------------------------------------------------------------------
 local player;
+-- Indices of table 'Players' are:
+--    a number (k=integer, v=player table)
+--    a player ID string or name (k=ID, v=error code)
+Players={};
 
 for _,name in pairs(names) do
+	io.stderr:write(
+		("\rProcessing %d/%d"):format(_,#names)
+	);
 	-- Retrieve general player information:
 	local result,code,headers,response=
 		request_playerdata(
@@ -464,7 +487,8 @@ for _,name in pairs(names) do
 
 	-- Ensure JSON wasn't empty:
 	if (not player) then
-		print(print_nonexist(name))
+		-- If JSON was empty, then that means the player does not exist.
+		Players[name]=0;
 	else --no 'continue' statement :(
 		-- Retrieve player top plays.
 		local result,code,headers,response=
@@ -484,20 +508,43 @@ for _,name in pairs(names) do
 
 		-- Ensure JSON wasn't empty:
 		if (not player.top) then
-			print(print_notopplays(name))
+			Players[name]=1;
 		else
 			-- Perform all appropriate checks:
 			for _,check in pairs(cfg.c_Checks) do
 				Checks[check](player,cfg);
 			end
 
-			-- Print info on player:
-			print(print_player(player))
+			-- Store player information in player table:
+			Players[#Players+1]=player;
 		end
 	end
 
 	-- Take a break if necessary.
 	if ( (_ % cfg.b_i) == 0) then
 		os.execute(("sleep %s"):format(cfg.b_l))
+	end
+end
+
+--------------------------------------------------------------------------------
+-- Printing output.
+--------------------------------------------------------------------------------
+-- Done gathering information on all players- now sort and print.
+table.sort(Players,function (a,b)
+	return #((a.reports or Void).reports or Void) > #((b.reports or Void).reports or Void)
+end)
+
+-- Integer keys are guaranteed to be player tables.
+for k,v in ipairs(Players) do
+	print(print_player(v))
+	Players[k]=nil;
+end
+-- Everything else remaining are user-ID keys.
+-- Meaning errors have been thrown.
+for k,v in pairs(Players) do
+	if (v==0) then
+		print_nonexist(k);
+	else
+		print_notopplays(k);
 	end
 end
