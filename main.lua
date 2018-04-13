@@ -306,7 +306,7 @@ function Checks.pp_spread(player,cfg)
 		report(
 			player,
 			"pp_spread",
-			("Unnaceptable spread for player: skewed distribution\n\t\t\tequation (%s < %s < %s) does not hold true"),
+			("Unaceptable spread for player: skewed distribution\n\t\t\tequation (%s < %s < %s) does not hold true"),
 			thresh-cfg.c_ppSpr_spreadleniency,numspread,thresh+cfg.c_ppSpr_spreadleniency
 		)
 	end
