@@ -571,6 +571,8 @@ for _,name in pairs(names) do
 	end
 end
 
+-- Carriage return to get rid of "progress" message.
+io.stdout:write("\r");
 --------------------------------------------------------------------------------
 -- Printing output.
 --------------------------------------------------------------------------------
