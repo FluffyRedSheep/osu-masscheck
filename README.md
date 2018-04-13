@@ -42,9 +42,10 @@ The `options` may be a continuous sequence of flags (`--flag_name`) and argument
 ```
 **rank_range** (TBD, unused)
 ```
---c_rrChk_highboundary (2000) - maximum rank players can have
---c_rrChk_lowboundary (7000)  - minimum rank players must have
---c_rrChk_margin (2000)       - how many ranks of margin are granted to the player
+--c_rrChk_highboundary (30000) - maximum rank players can have
+--c_rrChk_lowboundary (70000)  - minimum rank players must have
+--c_rrChk_highmargin (2000)    - how many ranks below the maximum the player may be
+--c_rrChk_lowmargin (2000)     - how many ranks above the minimum the player may be
 ```
 ## Checks
 ### pp_gap
@@ -53,5 +54,6 @@ Goes through the requested players' top plays, and raises an error if the pp dif
 Checks for inequal distribution among top plays- it takes the average pp difference between two top plays (`total pp / amount of top plays`) and then proceeds to check each individual pp increase between two plays. If a given pp gap veers off from the average by `c_ppSpr_spreadleniency` pp, then an error is raised.
 ### min_playcount
 Playcount of a player must be **bigger** than `c_pcMin_minplaycount`, lest an error is thrown.
-### rank_range (TBD)
-Shall verify that a players' rank is somewhere inbetween `c_rrChk_highboundary-c_rrChk_margin` and `c_rrChk_lowboundary+c_rrChk_margin`. If this does not hold true, and error is raised.
+### rank_range
+Verifies that a players' rank range is somewhere inbetween `c_rrChk-highboundary-c_rrChk_highmargin` and `c_rrChk_lowboundary+c_rrChk_lowmargin`. It throws an error otherwise.
+This check also emits warnings should a players' rank be between the limit and the limit+margin.

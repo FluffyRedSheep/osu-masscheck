@@ -361,19 +361,19 @@ function Checks.rank_range(player,cfg)
 			)
 		end
 	elseif ( rank > cfg.c_rrChk_lowboundary ) then
-		if ( rank > (cfg.c_rrChk_lowboundary - cfg.c_rrChk_lowmargin)) then
+		if ( rank > (cfg.c_rrChk_lowboundary + cfg.c_rrChk_lowmargin)) then
 			report(
 				player,
 				"rankcheck_underrank",
 				("Player rank not eligible\n\t\t\t#%s >= #%s"),
-				cfg.c_rrChk_highboundary - cfg.c_rrChk_highmargin,rank
+				cfg.c_rrChk_highboundary + cfg.c_rrChk_highmargin,rank
 			)
 		else
 			report(
 				player,
 				"warn_underrank_margin",
 				("Player rank falls within leniency margin\n\t\t\t#%s >= #%s >= #%s"),
-				cfg.c_rrChk_lowboundary,rank,cfg.c_rrChk_lowboundary - cfg.c_rrChk_lowmargin
+				cfg.c_rrChk_lowboundary,rank,cfg.c_rrChk_lowboundary + cfg.c_rrChk_lowmargin
 			)
 		end
 	end
