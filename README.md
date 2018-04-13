@@ -9,7 +9,7 @@ You must request an osu!API key [here](https://osu.ppy.sh/p/api). By default, `o
 To alter this, see below.
 
 ## Usage
-Execution is simple: `cat file_with_list_of_names_to_check | lua main.lua [options]` will output to `stdout` a full listing of names. (this might take a while, as individual requests take a short while, coupled with the fact requests are throttled.)
+Execution is simple: `cat file_with_list_of_names_to_check | lua main.lua [options]` will output to `stdout` a full listing of names. (this might take a while, as individual requests take a short while, coupled with the fact that requests are throttled.)
 
 The `options` may be a continuous sequence of flags (`--flag_name`) and arguments (`20`, `"a"`, etc.)
 
@@ -49,7 +49,7 @@ The `options` may be a continuous sequence of flags (`--flag_name`) and argument
 ```
 ## Checks
 ### pp_gap
-Goes through the requested players' top plays, and raises an error if the pp difference between two plays exceeds `c_ppGap_maxgap`
+Goes through the requested players' top plays and raises an error if the pp difference between two plays exceeds `c_ppGap_maxgap`
 ### pp_spread
 Checks for inequal distribution among top plays- it takes the average pp difference between two top plays (`total pp / amount of top plays`) and then proceeds to check each individual pp increase between two plays. If a given pp gap veers off from the average by `c_ppSpr_spreadleniency` pp, then an error is raised.
 ### min_playcount
