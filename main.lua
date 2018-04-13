@@ -72,7 +72,7 @@ local cfg={
 	c_ppGap_maxgap=50;         -- Maximum pp difference between two top plays.
 	c_ppSpr_spreadleniency=10; -- ((r_l/2)th play - c_spreadleniency) < (avg. pp of r_l top plays) < ((r_l/2)th top play - spreadleniency)
 	c_pcMin_minplaycount=8000; -- Minimum amount of plays
-	c_rrChk_highboundary=20000;-- Upper rank boundary
+	c_rrChk_highboundary=30000;-- Upper rank boundary
 	c_rrChk_highmargin=2000;   -- Allowable upper rank margin
 	c_rrChk_lowboundary=70000; -- Lower rank boundary
 	c_rrChk_lowmargin=2000;    -- Allowable lower rank margin
@@ -335,9 +335,54 @@ end
 -- can be given with a deviating-rank range. Leave this leniency margin at '0'
 -- for a hard rank check.
 --------------------------------------------------------------------------------
---function Checks.rank_range(player,cfg)
---
---end
+function Checks.rank_range(player,cfg)
+	local rank;
+	-- Use the appropriate rank.
+	if ( cfg.c_rrChk_ranktype == "g" ) then
+		rank=tonumber(player.pp_rank);
+	else
+		rank=tonumber(player.pp_country_rank);
+	end
+
+	if ( rank < cfg.c_rrChk_highboundary ) then
+		if ( rank < (cfg.c_rrChk_highboundary - cfg.c_rrChk_highmargin)) then
+			report(
+				player,
+				"rankcheck_overrank",
+				("Player rank not eligible\n\t\t\t#%s <= #%s"),
+				rank,cfg.c_rrChk_highboundary - cfg.c_rrChk_highmargin
+			)
+		else
+			report(
+				player,
+				"warn_overrank_margin",
+				("Player rank falls within leniency margin\n\t\t\t#%s <= #%s <= #%s"),
+				cfg.c_rrChk_highboundary - cfg.c_rrChk_highmargin,rank,cfg.c_rrChk_highboundary
+			)
+		end
+	elseif ( rank > cfg.c_rrChk_lowboundary ) then
+		if ( rank > (cfg.c_rrChk_lowboundary - cfg.c_rrChk_lowmargin)) then
+			report(
+				player,
+				"rankcheck_underrank",
+				("Player rank not eligible\n\t\t\t#%s >= #%s"),
+				cfg.c_rrChk_highboundary - cfg.c_rrChk_highmargin,rank
+			)
+		else
+			report(
+				player,
+				"warn_underrank_margin",
+				("Player rank falls within leniency margin\n\t\t\t#%s >= #%s >= #%s"),
+				cfg.c_rrChk_lowboundary,rank,cfg.c_rrChk_lowboundary - cfg.c_rrChk_lowmargin
+			)
+		end
+	end
+end
+
+--	c_rrChk_highboundary=20000;-- Upper rank boundary
+--	c_rrChk_highmargin=2000;   -- Allowable upper rank margin
+--	c_rrChk_lowboundary=70000; -- Lower rank boundary
+--	c_rrChk_lowmargin=2000;    -- Allowable lower rank margin
 
 --------------------------------------------------------------------------------
 -- Encode to uri.
